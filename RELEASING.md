@@ -17,16 +17,19 @@ and tag the published commit. [Cargo publishing guide](https://doc.rust-lang.org
 
 - Resolve the upstream specification/derived-code licence question described
   in the README. This applies to the contents of the public repository too.
-- Create the public repository and configure its URL as Git remote `origin`.
-  Add its public URL as `package.repository` in `Cargo.toml`.
-- Confirm the crate name is available and configure crates.io authentication
-  with `cargo login` or Cargo's supported credential provider.
-- Change `publish = false` to `publish = ["crates-io"]` once the crate is ready
-  for publication. The script respects this restriction, including in dry runs.
+- Keep Git remote `origin` and `package.repository` in `Cargo.toml` pointing
+  to the public repository.
+- Confirm the crate name is available. For authentication, export
+  `CARGO_REGISTRY_TOKEN` in the invoking environment; Cargo reads it directly.
+  No login step is needed when using this token. Alternatively, use
+  `mise run release:login` or another Cargo credential provider.
+- The manifest permits crates.io using `publish = ["crates-io"]`. An error
+  saying the manifest does not permit publication is a manifest configuration
+  problem, not a login failure. The script respects this restriction in dry runs too.
 - Install the toolchains and tools declared in `mise.toml`, plus Python 3 for
   parsing Cargo's JSON metadata in the Bash script.
 
-No remote repository or crates.io release has been created by adding this workflow.
+The public repository is configured. Preparing the workflow does not publish a crate.
 
 ## Prepare a version
 
@@ -81,7 +84,13 @@ and verifies the identical tag exists on `origin`. It runs `mise run check`
 
 `release:publish` repeats those gates, then uploads with Cargo. It never commits,
 tags, pushes, edits the manifest or passes a token on the command line.
-Cargo uses its configured credentials. Both modes read `origin` and may access
+Cargo reads the inherited `CARGO_REGISTRY_TOKEN` through its standard token
+credential provider. The task and script do not copy it into a configuration
+file, print it or expand it into command-line arguments. If using a custom
+credential-provider configuration, ensure it includes `cargo:token` to enable
+environment-token authentication. See [Cargo environment variables](https://doc.rust-lang.org/cargo/reference/environment-variables.html)
+and [registry authentication](https://doc.rust-lang.org/cargo/reference/registry-authentication.html).
+Both modes read `origin` and may access
 package registries; only `release:publish` (or the script's `--publish`) uploads a crate.
 
 Cargo's dry run packages the source and checks that the unpacked crate builds.

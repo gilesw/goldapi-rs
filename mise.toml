@@ -35,3 +35,9 @@ run = "bash scripts/publish.sh"
 description = "Publish the tagged release to crates.io after all checks"
 dir = "{{config_root}}"
 run = "bash scripts/publish.sh --publish"
+
+[tasks."release:login"]
+description = "Optional Cargo login when not using CARGO_REGISTRY_TOKEN"
+dir = "{{config_root}}"
+raw = true
+run = "cargo login --registry crates-io"

@@ -154,5 +154,5 @@ The handwritten wrapper is dual-licensed under
 [MIT](LICENSE-MIT) and [Apache-2.0](LICENSE-APACHE).
 The upstream specification identifies its licence as `Commercial`. The licence
 position for redistributing the specification and derived artifacts remains
-unresolved. `publish = false` records this crate's current local-prototype status;
-the included licence files do not relicense the provider's material or data.
+unresolved. The manifest permits publication to crates.io; the included licence
+files do not relicense the provider's material or data.

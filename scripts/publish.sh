@@ -69,6 +69,8 @@ cargo publish --dry-run --locked --registry crates-io
 
 if [[ "$mode" == publish ]]; then
     verify_release
+    # Cargo's token provider reads inherited CARGO_REGISTRY_TOKEN directly.
+    # Do not expand the token into arguments or persist it with cargo login.
     cargo publish --locked --registry crates-io
 else
     printf '%s\n' "Dry run passed. To upload this release: scripts/publish.sh $tag --publish"
