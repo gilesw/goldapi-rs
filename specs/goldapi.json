@@ -1,0 +1,1248 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "GoldAPI.io Precious Metals Prices API",
+    "description": "GoldAPI.io provides real-time and historical precious metals price data for gold, silver, platinum and palladium across major global currencies. Use it to build gold price widgets, bullion dealer tools, jewelry calculators, trading dashboards, portfolio apps, AI agents, automation workflows and financial applications.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "GoldAPI.io Support",
+      "email": "support@goldapi.io",
+      "url": "https://www.goldapi.io"
+    },
+    "license": {
+      "name": "Commercial",
+      "url": "https://www.goldapi.io/terms"
+    }
+  },
+  "externalDocs": {
+    "description": "GoldAPI.io API Documentation",
+    "url": "https://www.goldapi.io/api-documentation"
+  },
+  "servers": [
+    {
+      "url": "https://www.goldapi.io",
+      "description": "GoldAPI.io production API"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Prices",
+      "description": "Live and historical precious metals prices"
+    },
+    {
+      "name": "Rates",
+      "description": "Current exchange rates between supported currencies"
+    },
+    {
+      "name": "LBMA",
+      "description": "Historical LBMA precious-metal benchmark prices"
+    },
+    {
+      "name": "Statistics",
+      "description": "Authenticated API request usage statistics"
+    },
+    {
+      "name": "Status",
+      "description": "API status and account information"
+    }
+  ],
+  "paths": {
+    "/api/price/{metal}/{currency}": {
+      "get": {
+        "tags": [
+          "Prices"
+        ],
+        "operationId": "getMetalPriceV2",
+        "summary": "Get live precious metal price",
+        "description": "Returns the latest spot price for a precious metal in the selected currency.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/MetalPathParameter"
+          },
+          {
+            "$ref": "#/components/parameters/CurrencyPathParameter"
+          },
+          {
+            "$ref": "#/components/parameters/MeltPriceQueryParameter"
+          },
+          {
+            "$ref": "#/components/parameters/CurrencyInfoQueryParameter"
+          },
+          {
+            "$ref": "#/components/parameters/PurityQueryParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Latest precious metal spot price.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LivePriceResponse"
+                },
+                "examples": {
+                  "liveGoldUsd": {
+                    "summary": "Live gold price in USD",
+                    "value": {
+                      "timestamp": 1716000000,
+                      "datetime": "2024-05-18T02:40:00Z",
+                      "metal": "XAU",
+                      "currency": "USD",
+                      "exchange": "FOREXCOM",
+                      "symbol": "FOREXCOM:XAUUSD",
+                      "prev_close_price": 2380.12,
+                      "open_price": 2382.44,
+                      "low_price": 2374.91,
+                      "high_price": 2395.63,
+                      "open_time": 1715990400,
+                      "price": 2391.72,
+                      "change": 11.6,
+                      "change_percent": 0.49
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/price/{metal}/{currency}/{date}": {
+      "get": {
+        "tags": [
+          "Prices"
+        ],
+        "operationId": "getMetalPriceByDateV2",
+        "summary": "Get historical precious metal price",
+        "description": "Returns the historical spot price for a precious metal in the selected currency for a specific date.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/MetalPathParameter"
+          },
+          {
+            "$ref": "#/components/parameters/CurrencyPathParameter"
+          },
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "description": "Historical date in preferred YYYY-MM-DD format. YYYYMMDD remains supported.",
+            "schema": {
+              "type": "string",
+              "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{8})$",
+              "examples": [
+                "2025-01-01"
+              ]
+            },
+            "examples": {
+              "newYearsDay2025": {
+                "summary": "January 1, 2025",
+                "value": "2025-01-01"
+              },
+              "endOfYear2024": {
+                "summary": "December 31, 2024",
+                "value": "2024-12-31"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/parameters/MeltPriceQueryParameter"
+          },
+          {
+            "$ref": "#/components/parameters/CurrencyInfoQueryParameter"
+          },
+          {
+            "$ref": "#/components/parameters/PurityQueryParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Historical precious metal spot price.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalPriceResponse"
+                },
+                "examples": {
+                  "historicalGoldUsd": {
+                    "summary": "Historical gold price in USD",
+                    "value": {
+                      "timestamp": 1735689600,
+                      "date": "2025-01-01",
+                      "metal": "XAU",
+                      "currency": "USD",
+                      "exchange": "FOREXCOM",
+                      "symbol": "FOREXCOM:XAUUSD",
+                      "prev_close_price": 2624.18,
+                      "open_price": 2624.18,
+                      "low_price": 2624.18,
+                      "high_price": 2624.18,
+                      "open_time": 1735689600,
+                      "price": 2624.18,
+                      "change": 0,
+                      "change_percent": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/history/{metal}/{currency}": {
+      "get": {
+        "tags": [
+          "Prices"
+        ],
+        "operationId": "getMetalPriceHistory",
+        "summary": "Get a historical metal price range",
+        "description": "Returns ordered daily prices for an inclusive date range of up to 90 days. Dates without stored metal or FX data are omitted.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/MetalPathParameter"
+          },
+          {
+            "$ref": "#/components/parameters/CurrencyPathParameter"
+          },
+          {
+            "$ref": "#/components/parameters/FromDateQueryParameter"
+          },
+          {
+            "$ref": "#/components/parameters/ToDateQueryParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ordered historical daily metal prices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetalHistoryResponse"
+                },
+                "examples": {
+                  "goldUsdHistory": {
+                    "summary": "Gold prices in USD",
+                    "value": {
+                      "metal": "XAU",
+                      "currency": "USD",
+                      "from": "2025-01-01",
+                      "to": "2025-01-03",
+                      "prices": [
+                        {
+                          "date": "2025-01-02",
+                          "price": 2658.12
+                        },
+                        {
+                          "date": "2025-01-03",
+                          "price": 2640.45
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/rates/{base}/{quote}": {
+      "get": {
+        "tags": [
+          "Rates"
+        ],
+        "operationId": "getCurrencyRate",
+        "summary": "Get a current currency exchange rate",
+        "description": "Returns the current conversion price, bid, and ask between two supported currencies.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BaseCurrencyPathParameter"
+          },
+          {
+            "$ref": "#/components/parameters/QuoteCurrencyPathParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current currency exchange rate.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateResponse"
+                },
+                "examples": {
+                  "usdEur": {
+                    "summary": "US dollar to euro",
+                    "value": {
+                      "timestamp": 1735689600,
+                      "base": "USD",
+                      "quote": "EUR",
+                      "exchange": "GAPI:USDEUR",
+                      "symbol": "GAPI:USDEUR",
+                      "price": 0.963245,
+                      "bid": 0.9631,
+                      "ask": 0.9634
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          },
+          "503": {
+            "$ref": "#/components/responses/ServiceUnavailable"
+          }
+        }
+      }
+    },
+    "/api/lbma/{metal}/{date}": {
+      "get": {
+        "tags": [
+          "LBMA"
+        ],
+        "operationId": "getLbmaPriceByDate",
+        "summary": "Get an LBMA benchmark price by date",
+        "description": "Returns USD-per-troy-ounce LBMA benchmark prices. Gold, platinum, and palladium expose AM and PM fixes; silver exposes its single daily price.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/MetalPathParameter"
+          },
+          {
+            "$ref": "#/components/parameters/DatePathParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Historical LBMA benchmark price.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LbmaResponse"
+                },
+                "examples": {
+                  "goldFixes": {
+                    "summary": "Gold AM and PM fixes",
+                    "value": {
+                      "timestamp": 1735689600000,
+                      "date": "2025-01-01",
+                      "metal": "XAU",
+                      "currency": "USD",
+                      "exchange": "LBMA",
+                      "am": 2624.5,
+                      "pm": 2627.25
+                    }
+                  },
+                  "silverPrice": {
+                    "summary": "Silver daily price",
+                    "value": {
+                      "timestamp": 1735689600000,
+                      "date": "2025-01-01",
+                      "metal": "XAG",
+                      "currency": "USD",
+                      "exchange": "LBMA",
+                      "price": 29.41
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/stat": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "operationId": "getRequestStatistics",
+        "summary": "Get API request usage statistics",
+        "description": "Returns request totals for today, yesterday, the current calendar month, and the previous calendar month for the authenticated API key.",
+        "responses": {
+          "200": {
+            "description": "Request usage totals.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestStatisticsResponse"
+                },
+                "examples": {
+                  "usage": {
+                    "summary": "Request usage totals",
+                    "value": {
+                      "requests_today": 125,
+                      "requests_yesterday": 98,
+                      "requests_month": 2437,
+                      "requests_last_month": 5184
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/status": {
+      "get": {
+        "tags": [
+          "Status"
+        ],
+        "operationId": "getApiStatus",
+        "summary": "Get API status",
+        "description": "Returns API status or account/request information if available.",
+        "responses": {
+          "200": {
+            "description": "API status response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                },
+                "examples": {
+                  "ok": {
+                    "summary": "Status check succeeded",
+                    "value": {
+                      "result": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-access-token",
+        "description": "GoldAPI.io API key. Pass your key as the x-access-token request header."
+      }
+    },
+    "parameters": {
+      "MetalPathParameter": {
+        "name": "metal",
+        "in": "path",
+        "required": true,
+        "description": "Precious metal symbol.",
+        "schema": {
+          "$ref": "#/components/schemas/MetalSymbol"
+        },
+        "examples": {
+          "gold": {
+            "summary": "Gold",
+            "value": "XAU"
+          },
+          "silver": {
+            "summary": "Silver",
+            "value": "XAG"
+          },
+          "platinum": {
+            "summary": "Platinum",
+            "value": "XPT"
+          },
+          "palladium": {
+            "summary": "Palladium",
+            "value": "XPD"
+          }
+        }
+      },
+      "CurrencyPathParameter": {
+        "name": "currency",
+        "in": "path",
+        "required": true,
+        "description": "Currency code used to quote the metal price.",
+        "schema": {
+          "$ref": "#/components/schemas/CurrencyCode"
+        },
+        "examples": {
+          "usd": {
+            "summary": "US dollar",
+            "value": "USD"
+          },
+          "aud": {
+            "summary": "Australian dollar",
+            "value": "AUD"
+          },
+          "eur": {
+            "summary": "Euro",
+            "value": "EUR"
+          },
+          "aed": {
+            "summary": "UAE dirham",
+            "value": "AED"
+          }
+        }
+      },
+      "BaseCurrencyPathParameter": {
+        "name": "base",
+        "in": "path",
+        "required": true,
+        "description": "Currency code to convert from.",
+        "schema": {
+          "$ref": "#/components/schemas/CurrencyCode"
+        },
+        "example": "USD"
+      },
+      "QuoteCurrencyPathParameter": {
+        "name": "quote",
+        "in": "path",
+        "required": true,
+        "description": "Currency code to convert to.",
+        "schema": {
+          "$ref": "#/components/schemas/CurrencyCode"
+        },
+        "example": "EUR"
+      },
+      "DatePathParameter": {
+        "name": "date",
+        "in": "path",
+        "required": true,
+        "description": "Historical date in preferred YYYY-MM-DD format. YYYYMMDD remains supported.",
+        "schema": {
+          "$ref": "#/components/schemas/DateInput"
+        },
+        "example": "2025-01-01"
+      },
+      "FromDateQueryParameter": {
+        "name": "from",
+        "in": "query",
+        "required": true,
+        "description": "Inclusive range start in preferred YYYY-MM-DD format. YYYYMMDD remains supported.",
+        "schema": {
+          "$ref": "#/components/schemas/DateInput"
+        },
+        "example": "2025-01-01"
+      },
+      "ToDateQueryParameter": {
+        "name": "to",
+        "in": "query",
+        "required": true,
+        "description": "Inclusive range end in preferred YYYY-MM-DD format. YYYYMMDD remains supported. The inclusive range cannot exceed 90 days or include future dates.",
+        "schema": {
+          "$ref": "#/components/schemas/DateInput"
+        },
+        "example": "2025-01-31"
+      },
+      "MeltPriceQueryParameter": {
+        "name": "melt_price",
+        "in": "query",
+        "required": false,
+        "description": "Include melt prices per gram by karat.",
+        "schema": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "CurrencyInfoQueryParameter": {
+        "name": "currency_info",
+        "in": "query",
+        "required": false,
+        "description": "Include currency name and symbol information.",
+        "schema": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "PurityQueryParameter": {
+        "name": "purity",
+        "in": "query",
+        "required": false,
+        "description": "Include purity ratios by karat.",
+        "schema": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "schemas": {
+      "MetalSymbol": {
+        "type": "string",
+        "description": "Precious metal symbol.",
+        "enum": [
+          "XAU",
+          "XAG",
+          "XPT",
+          "XPD"
+        ]
+      },
+      "CurrencyCode": {
+        "type": "string",
+        "description": "Supported quote currency. Availability can vary by metal; use /api/currencies and /api/metals for the current pair matrix.",
+        "enum": [
+          "AED",
+          "ARS",
+          "AUD",
+          "BDT",
+          "BGN",
+          "BHD",
+          "BOB",
+          "BRL",
+          "BTC",
+          "CAD",
+          "CHF",
+          "CLP",
+          "CNY",
+          "COP",
+          "CZK",
+          "DKK",
+          "DOP",
+          "DZD",
+          "EGP",
+          "EUR",
+          "FJD",
+          "GBP",
+          "GHS",
+          "GTQ",
+          "HKD",
+          "IDR",
+          "ILS",
+          "INR",
+          "IQD",
+          "IRR",
+          "ISK",
+          "JOD",
+          "JPY",
+          "KES",
+          "KHR",
+          "KRW",
+          "KWD",
+          "LAK",
+          "LBP",
+          "LKR",
+          "MAD",
+          "MMK",
+          "MXN",
+          "MYR",
+          "NGN",
+          "NOK",
+          "NPR",
+          "NZD",
+          "OMR",
+          "PEN",
+          "PHP",
+          "PKR",
+          "PLN",
+          "PYG",
+          "QAR",
+          "RON",
+          "RUB",
+          "SAR",
+          "SEK",
+          "SGD",
+          "SYP",
+          "THB",
+          "TRY",
+          "TWD",
+          "UAH",
+          "USD",
+          "UYU",
+          "UZS",
+          "VND",
+          "XAG",
+          "YER",
+          "ZAR"
+        ]
+      },
+      "DateInput": {
+        "type": "string",
+        "description": "A calendar date. YYYY-MM-DD is preferred; YYYYMMDD is accepted for backward compatibility.",
+        "pattern": "^(?:[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{8})$",
+        "examples": [
+          "2025-01-01",
+          "20250101"
+        ]
+      },
+      "LivePriceResponse": {
+        "type": "object",
+        "description": "Live precious metal spot price response.",
+        "properties": {
+          "timestamp": {
+            "type": "integer",
+            "description": "Unix timestamp for the returned price.",
+            "examples": [
+              1716000000
+            ]
+          },
+          "datetime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 datetime derived from the returned timestamp."
+          },
+          "metal": {
+            "$ref": "#/components/schemas/MetalSymbol"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/CurrencyCode"
+          },
+          "exchange": {
+            "type": "string",
+            "description": "Exchange or data source identifier.",
+            "examples": [
+              "FOREXCOM"
+            ]
+          },
+          "symbol": {
+            "type": "string",
+            "description": "Market symbol for the metal and currency pair.",
+            "examples": [
+              "FOREXCOM:XAUUSD"
+            ]
+          },
+          "prev_close_price": {
+            "type": "number",
+            "description": "Previous close price."
+          },
+          "open_price": {
+            "type": "number",
+            "description": "Open price."
+          },
+          "low_price": {
+            "type": "number",
+            "description": "Low price for the current session."
+          },
+          "high_price": {
+            "type": "number",
+            "description": "High price for the current session."
+          },
+          "open_time": {
+            "type": "integer",
+            "description": "Unix timestamp for the session open time."
+          },
+          "price": {
+            "type": "number",
+            "description": "Latest spot price."
+          },
+          "change": {
+            "type": "number",
+            "description": "Absolute price change."
+          },
+          "change_percent": {
+            "type": "number",
+            "description": "Percentage price change."
+          },
+          "melt_price_per_gram": {
+            "type": "object",
+            "description": "Optional melt prices per gram keyed by karat.",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "currency_info": {
+            "type": "object",
+            "description": "Optional information about the requested currency.",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "symbol": {
+                "type": "string"
+              }
+            }
+          },
+          "purity": {
+            "type": "object",
+            "description": "Optional purity ratios keyed by karat.",
+            "additionalProperties": {
+              "type": "number"
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "HistoricalPriceResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/LivePriceResponse"
+          },
+          {
+            "type": "object",
+            "description": "Historical precious metal spot price response.",
+            "properties": {
+              "date": {
+                "type": "string",
+                "description": "Normalized historical date in YYYY-MM-DD format when present.",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+                "examples": [
+                  "2025-01-01"
+                ]
+              }
+            },
+            "additionalProperties": true
+          }
+        ]
+      },
+      "HistoricalPricePoint": {
+        "type": "object",
+        "required": [
+          "date",
+          "price"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Price date normalized to YYYY-MM-DD."
+          },
+          "price": {
+            "type": "number",
+            "description": "Daily metal price in the requested currency."
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetalHistoryResponse": {
+        "type": "object",
+        "required": [
+          "metal",
+          "currency",
+          "from",
+          "to",
+          "prices"
+        ],
+        "properties": {
+          "metal": {
+            "$ref": "#/components/schemas/MetalSymbol"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/CurrencyCode"
+          },
+          "from": {
+            "type": "string",
+            "format": "date",
+            "description": "Normalized inclusive range start."
+          },
+          "to": {
+            "type": "string",
+            "format": "date",
+            "description": "Normalized inclusive range end."
+          },
+          "prices": {
+            "type": "array",
+            "description": "Ordered daily prices. Missing dates are omitted.",
+            "maxItems": 90,
+            "items": {
+              "$ref": "#/components/schemas/HistoricalPricePoint"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RateResponse": {
+        "type": "object",
+        "required": [
+          "timestamp",
+          "base",
+          "quote",
+          "exchange",
+          "symbol",
+          "price",
+          "bid",
+          "ask"
+        ],
+        "properties": {
+          "timestamp": {
+            "type": "integer",
+            "description": "Unix timestamp in seconds for the oldest source quote used."
+          },
+          "base": {
+            "$ref": "#/components/schemas/CurrencyCode"
+          },
+          "quote": {
+            "$ref": "#/components/schemas/CurrencyCode"
+          },
+          "exchange": {
+            "type": "string",
+            "description": "GoldAPI rate identifier.",
+            "pattern": "^GAPI:[A-Z0-9]+$"
+          },
+          "symbol": {
+            "type": "string",
+            "description": "GoldAPI rate symbol.",
+            "pattern": "^GAPI:[A-Z0-9]+$"
+          },
+          "price": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Conversion rate from base to quote."
+          },
+          "bid": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "ask": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "LbmaResponse": {
+        "type": "object",
+        "required": [
+          "timestamp",
+          "date",
+          "metal",
+          "currency",
+          "exchange"
+        ],
+        "properties": {
+          "timestamp": {
+            "type": "integer",
+            "description": "Unix timestamp in milliseconds for the stored LBMA history record."
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "metal": {
+            "$ref": "#/components/schemas/MetalSymbol"
+          },
+          "currency": {
+            "type": "string",
+            "const": "USD"
+          },
+          "exchange": {
+            "type": "string",
+            "const": "LBMA"
+          },
+          "am": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "AM fixing for gold, platinum, or palladium."
+          },
+          "pm": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "PM fixing for gold, platinum, or palladium."
+          },
+          "price": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Single daily silver benchmark price."
+          }
+        },
+        "anyOf": [
+          {
+            "required": [
+              "am",
+              "pm"
+            ]
+          },
+          {
+            "required": [
+              "price"
+            ]
+          }
+        ],
+        "additionalProperties": false
+      },
+      "RequestStatisticsResponse": {
+        "type": "object",
+        "required": [
+          "requests_today",
+          "requests_yesterday",
+          "requests_month",
+          "requests_last_month"
+        ],
+        "properties": {
+          "requests_today": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Requests made today."
+          },
+          "requests_yesterday": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Requests made yesterday."
+          },
+          "requests_month": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Requests made during the current calendar month."
+          },
+          "requests_last_month": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Requests made during the previous calendar month."
+          }
+        },
+        "additionalProperties": false
+      },
+      "StatusResponse": {
+        "type": "object",
+        "description": "API status or account/request information response.",
+        "properties": {
+          "result": {
+            "type": "boolean",
+            "description": "Whether the status check succeeded.",
+            "examples": [
+              true
+            ]
+          }
+        },
+        "additionalProperties": true
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Error response.",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error name or category.",
+            "examples": [
+              "Unauthorized"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message.",
+            "examples": [
+              "Invalid or missing API key"
+            ]
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code.",
+            "examples": [
+              401
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Invalid request parameters.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "examples": {
+              "badRequest": {
+                "summary": "Invalid request",
+                "value": {
+                  "error": "Bad Request",
+                  "message": "Invalid metal, currency or date parameter",
+                  "statusCode": 400
+                }
+              }
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Invalid or missing API key.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "examples": {
+              "unauthorized": {
+                "summary": "Unauthorized",
+                "value": {
+                  "error": "Unauthorized",
+                  "message": "Invalid or missing API key",
+                  "statusCode": 401
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Requested resource was not found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "examples": {
+              "notFound": {
+                "summary": "Not found",
+                "value": {
+                  "error": "Not Found",
+                  "message": "The requested resource was not found",
+                  "statusCode": 404
+                }
+              }
+            }
+          }
+        }
+      },
+      "TooManyRequests": {
+        "description": "Rate limit exceeded.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "examples": {
+              "tooManyRequests": {
+                "summary": "Rate limit exceeded",
+                "value": {
+                  "error": "Too Many Requests",
+                  "message": "Rate limit exceeded",
+                  "statusCode": 429
+                }
+              }
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Unexpected server error.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "examples": {
+              "serverError": {
+                "summary": "Internal server error",
+                "value": {
+                  "error": "Internal Server Error",
+                  "message": "An unexpected error occurred",
+                  "statusCode": 500
+                }
+              }
+            }
+          }
+        }
+      },
+      "ServiceUnavailable": {
+        "description": "Current source data is unavailable or stale.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "examples": {
+              "rateUnavailable": {
+                "summary": "Current rate unavailable",
+                "value": {
+                  "error": "Current rate is temporarily unavailable.",
+                  "pair": "USD/EUR"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

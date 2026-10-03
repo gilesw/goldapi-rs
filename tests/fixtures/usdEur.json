@@ -1,0 +1,10 @@
+{
+  "timestamp": 1735689600,
+  "base": "USD",
+  "quote": "EUR",
+  "exchange": "GAPI:USDEUR",
+  "symbol": "GAPI:USDEUR",
+  "price": 0.963245,
+  "bid": 0.9631,
+  "ask": 0.9634
+}

@@ -1,0 +1,16 @@
+{
+  "timestamp": 1716000000,
+  "datetime": "2024-05-18T02:40:00Z",
+  "metal": "XAU",
+  "currency": "USD",
+  "exchange": "FOREXCOM",
+  "symbol": "FOREXCOM:XAUUSD",
+  "prev_close_price": 2380.12,
+  "open_price": 2382.44,
+  "low_price": 2374.91,
+  "high_price": 2395.63,
+  "open_time": 1715990400,
+  "price": 2391.72,
+  "change": 11.6,
+  "change_percent": 0.49
+}
